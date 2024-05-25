@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -46,6 +47,9 @@ func (c *Client) Save(item entity.Data) error {
 		return err
 	}
 	defer response.Body.Close()
+	if response.StatusCode != 200 {
+		return fmt.Errorf("status code: %d", response.StatusCode)
+	}
 	return nil
 }
 
