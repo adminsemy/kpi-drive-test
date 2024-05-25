@@ -2,7 +2,10 @@ package cli
 
 import "flag"
 
-const BufferSize = "buf"
+const (
+	BufferSize = "buf"
+	RespCount  = "resp"
+)
 
 type Cli struct {
 	CommandsInt map[string]int64
@@ -16,10 +19,10 @@ func New() *Cli {
 
 func (c *Cli) Run() {
 	bufSize := flag.Int64("buf", 1000, "buffer's size")
-	respCount := flag.Int64("resp", 100, "response's count")
+	respCount := flag.Int64("resp", 10, "response's count")
 
 	flag.Parse()
 
-	c.CommandsInt["buf"] = *bufSize
-	c.CommandsInt["resp"] = *respCount
+	c.CommandsInt[BufferSize] = *bufSize
+	c.CommandsInt[RespCount] = *respCount
 }

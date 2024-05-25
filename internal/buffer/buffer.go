@@ -2,7 +2,6 @@ package buffer
 
 import (
 	"container/list"
-	"fmt"
 	"sync"
 
 	"github.com/adminsemy/kpi-drive-test/internal/entity"
@@ -31,7 +30,6 @@ func (b *Buffer) Add(item entity.Data) error {
 		return myErrors.ErrMaxSize
 	}
 	b.list.PushBack(item)
-
 	return nil
 }
 
@@ -39,7 +37,7 @@ func (b *Buffer) Get() (entity.Data, error) {
 	b.Lock()
 	defer b.Unlock()
 	if b.list.Len() == 0 {
-		return entity.Data{}, fmt.Errorf("buffer is empty")
+		return entity.Data{}, myErrors.ErrEmptyBuffer
 	}
 	return b.list.Remove(b.list.Front()).(entity.Data), nil
 }
