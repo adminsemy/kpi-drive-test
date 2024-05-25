@@ -16,6 +16,7 @@ type Buffer struct {
 	sync.Mutex
 }
 
+// maxSize - максимальный размер буфера
 func New(maxSize int64) *Buffer {
 	return &Buffer{
 		maxSize: maxSize,
@@ -23,6 +24,7 @@ func New(maxSize int64) *Buffer {
 	}
 }
 
+// Добавляем данные в буфер
 func (b *Buffer) Add(item entity.Data) error {
 	b.Lock()
 	defer b.Unlock()
@@ -33,6 +35,7 @@ func (b *Buffer) Add(item entity.Data) error {
 	return nil
 }
 
+// Извлекаем данные из буфера
 func (b *Buffer) Get() (entity.Data, error) {
 	b.Lock()
 	defer b.Unlock()

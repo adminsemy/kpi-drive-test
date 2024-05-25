@@ -9,15 +9,19 @@ import (
 	"github.com/adminsemy/kpi-drive-test/internal/myErrors"
 )
 
+// Интерфейс для буфера данных
 type Buffer interface {
 	Add(item entity.Data) error
 	Get() (entity.Data, error)
 }
 
+// Интерфейс для клиента
 type Client interface {
 	Save(item entity.Data) error
 }
 
+// Процесс сохранения данных в нужное место
+// Считывает данные из буфера и сохраняет их в нужное место
 type Save struct {
 	ctx    context.Context
 	buffer Buffer
@@ -26,6 +30,10 @@ type Save struct {
 	client Client
 }
 
+// ctx - контекст для отмены
+// buffer - буфер для хранения данных
+// client - клиент для http запросов
+// chDone - канал для сигнала о том,что данных больше нет
 func New(ctx context.Context, buffer Buffer, client Client, chDone chan struct{}) *Save {
 	s := &Save{
 		ctx:    ctx,
@@ -39,6 +47,9 @@ func New(ctx context.Context, buffer Buffer, client Client, chDone chan struct{}
 	return s
 }
 
+// Добавляем данные в буфер
+// Если не удалось - возвращаем ошибку
+// Если буфер заполнен - остальные данные будут утеряны
 func (s *Save) Add(entity entity.Data) {
 	select {
 	case <-s.ctx.Done():
@@ -53,6 +64,7 @@ func (s *Save) Add(entity entity.Data) {
 	}
 }
 
+// Сигнал о том,что все сохранения завершены
 func (s *Save) Done() <-chan struct{} {
 	return s.chExit
 }

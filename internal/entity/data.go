@@ -2,6 +2,7 @@ package entity
 
 import "time"
 
+// Структура для эмуляции формы данных
 type Data struct {
 	PeriodStart         time.Time
 	PeriodEnd           time.Time

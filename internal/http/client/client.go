@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -15,13 +16,16 @@ const saveDataPostForm = "https://development.kpi-drive.ru/_api/facts/save_fact"
 
 // Клиент для http запросов к API
 type Client struct {
+	ctx    context.Context
 	token  string
 	client *http.Client
 }
 
+// ctx - контекст для отмены
 // token - токен для авторизации
-func New(token string) *Client {
+func New(ctx context.Context, token string) *Client {
 	return &Client{
+		ctx:    ctx,
 		token:  token,
 		client: &http.Client{},
 	}
@@ -31,7 +35,7 @@ func New(token string) *Client {
 // Если не удалось - возвращаем ошибку
 func (c *Client) Save(item entity.Data) error {
 	values := getValues(item)
-	request, err := http.NewRequest(http.MethodPost, saveDataPostForm, bytes.NewBufferString(values.Encode()))
+	request, err := http.NewRequestWithContext(c.ctx, http.MethodPost, saveDataPostForm, bytes.NewBufferString(values.Encode()))
 	if err != nil {
 		return err
 	}
